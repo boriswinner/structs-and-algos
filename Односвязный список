@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+
+typedef struct listnode_ {
+    int val;
+    struct listnode_ *next;
+} listnode;
+
+typedef struct list_ {
+    listnode *start;
+} list;
+
+void listadd(list* alist, int val){
+    listnode *tmp = (listnode*)(malloc(sizeof(listnode)));
+    tmp->val = val;
+    tmp->next = alist->start;
+    alist->start = tmp;
+}
+
+void listdelete(list* alist, int val){
+    listnode* i = alist->start;
+    listnode* prev = i;
+    while ((i != NULL) && (i->val != val)) {
+        prev = i;
+        i = prev->next;
+    }
+    if (i->val == val){
+        prev->next = i->next;
+    }
+}
+
+void listprint(list* head){
+    listnode* i = head->start;
+    while (i != NULL){
+        printf("%d ", i->val);
+        i = i->next;
+    }
+}
+
+int main()
+{
+    list testlist = {NULL};
+    listadd(&testlist,1);
+    listadd(&testlist,2);
+    listadd(&testlist,3);
+    listdelete(&testlist,2);
+    listprint(&testlist);
+    return 0;
+}
