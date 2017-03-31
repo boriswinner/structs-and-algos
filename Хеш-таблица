@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stddef.h>
-#define HASHSIZE 100
+#define HASHSIZE 9369319
 
 typedef struct listnode_ {
     int val;
@@ -20,68 +20,63 @@ void listadd(list* alist, int val){
 }
 
 void listdelete(list* alist, int val){
+    if (alist->start == NULL) return;
+    if (alist->start->val == val) {
+        alist->start = alist->start->next;
+        return;
+    }
     listnode* i = alist->start;
     listnode* prev = i;
-    while ((i != NULL) && (i->val != val)) {
+    while (i != NULL) {
+        if (i->val == val){
+            prev->next = i->next;
+        }
         prev = i;
         i = prev->next;
     }
-    if (i->val == val){
-        prev->next = i->next;
-        free(i);
-    }
 }
 
-void listprint(list* head){
-    listnode* i = head->start;
-    while (i != NULL){
-        printf("%d ", i->val);
-        i = i->next;
+void listfind(list* alist, int val){
+    if (alist->start == NULL) return;
+    listnode* i = alist->start;
+    if (i->val == val) {
+        alist->start = i->next;
+        return;
+    }
+    listnode* prev = i;
+    while (i != NULL) {
+        if (i->val == val){
+            prev->next = i->next;
+        }
+        prev = i;
+        i = prev->next;
     }
 }
 
 typedef struct hashtable{
-    //int size;
     list elem[HASHSIZE];
 } hashtable;
 
 int hashfunction(int key, int size){
-    return(32 * key + 17) % size;
+    return(31 * key + 17) % size;
 }
 
-void htadd(hashtable* atable, int key){
+void htadd(hashtable* atable, int key, int val){
     int i = hashfunction(key, HASHSIZE);
-    listadd(&(*atable).elem[i],key);
+    listadd(&(*atable).elem[i], val);
 }
 
-void hashremove(hashtable* atable, int key){
+void htremove(hashtable* atable, int key){
     int i = hashfunction(key, HASHSIZE);
-    listdelete(&(*atable).elem[i],key);
+    listdelete(&(*atable).elem[i], key);
 }
 
-void hashprint(hashtable* atable){
-    for (int i = 0; i < 100; ++i){
-        listprint(&(atable->elem[i]));
-    }
-}
+int htfind(hashtable* atable, int key){
+    int i = hashfunction(key, HASHSIZE);
 
-hashtable testtable;
+}
 
 int main()
 {
-    list testlist = {NULL};
-    listadd(&testlist,1);
-    listadd(&testlist,2);
-    listadd(&testlist,3);
-    listdelete(&testlist,2);
-    listprint(&testlist);
-    htadd(&testtable,10);
-    htadd(&testtable,15);
-    htadd(&testtable,5);
-    hashprint(&testtable);
     return 0;
 }
-
-// http://learnc.info/adt/linked_list.html
-// http://algolist.manual.ru/ds/s_has.php
-// https://gist.github.com/tonious/1377667
